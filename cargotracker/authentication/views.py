@@ -5,9 +5,11 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.generics import CreateAPIView
 
-from .serializers import UserLoginSerializer
+from .serializers import UserLoginSerializer, AgentRegistrationSerializer, UserRegistrationSerializer
 from cargotracker.UTILS.auth_utils import get_authentication_tokens_from_request
+from authentication.permissions import IsSuperUser
 
 
 class UserLoginView(TokenObtainPairView):
@@ -56,3 +58,44 @@ def logout_view(request):
             {"errors": {"detail": "You are already logged out"}},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class UserRegisterAPIView(CreateAPIView):
+    """
+    This class controls the flow for registering users
+    """
+
+    serializer_class = UserRegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method that makes the call to save the user.
+        """
+
+        response = super().create(request, *args, **kwargs)
+        payload = {"data": response.data.copy()}
+        payload["data"]["message"] = "Succesfully signed you up. You can now log into the application."
+
+        return Response(payload, status=status.HTTP_201_CREATED)
+
+
+class AgentRegisterAPIView(CreateAPIView):
+    """
+    This class contains logic for the creation of Branch Agents.
+    """
+
+    serializer_class = AgentRegistrationSerializer
+
+    permission_classes = [IsSuperUser]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Logic for creating agents.
+        """
+
+        response = super().create(request, *args, **kwargs)
+        payload = {"data": response.data.copy()}
+        agent_email = payload["data"].get("email")
+        payload["data"]["message"] = f"Succesfully created the agent. Login credentials have been sent to {agent_email}."
+
+        return Response(payload, status=status.HTTP_201_CREATED)

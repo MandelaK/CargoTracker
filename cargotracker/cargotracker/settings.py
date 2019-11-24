@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_extensions",
     "rest_framework_simplejwt.token_blacklist",
+    "huey.contrib.djhuey",
     # cargotracker apps
     "cargotracker",
     "authentication.apps.AuthenticationConfig",
@@ -128,6 +129,14 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Email Settings
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+ADMIN_EMAIL = "noreply@cloudtracker.app"
+EMAIL_USE_SSL = True
+
 # REST FRAMEWORK
 
 REST_FRAMEWORK = {
@@ -146,4 +155,11 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
+}
+
+# Settings for HEUY
+HUEY = {
+    "immediate": False,
+    "utc": True,
+    "connection": {"host": "localhost", "port": 6379, "db": 0},
 }

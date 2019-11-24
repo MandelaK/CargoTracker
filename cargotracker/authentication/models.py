@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import IntegrityError
+from django.conf import settings
+
+from cargotracker.UTILS.tasks import send_async_email
 
 
 class UserManager(BaseUserManager):
@@ -39,6 +42,13 @@ class UserManager(BaseUserManager):
 
         user.is_staff = True
         user.save()
+
+        agent_email = user.email
+        sender = settings.ADMIN_EMAIL
+        subject = "Account Created Succesfully."
+        message = f"You branch agent account was succesfully created. Your password is {kwargs.get('password')}."
+
+        send_async_email(subject=subject, message=message, sender=sender, recepients=[agent_email,])
 
         return user
 
