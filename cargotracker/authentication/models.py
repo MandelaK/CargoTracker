@@ -1,5 +1,57 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import IntegrityError
+
+
+class UserManager(BaseUserManager):
+    """
+    Provide manager methods for creating User instances
+    """
+
+    def create_user(self, **kwargs):
+        """
+        Ensure that users are created with valid passwords.
+        """
+
+        if not kwargs.get("email"):
+            raise TypeError("Users must have an email address.")
+
+        if not kwargs.get("password"):
+            raise TypeError("Users must have a password.")
+
+        try:
+            user = self.model.objects.create(**kwargs)
+            user.is_active = True
+            user.set_password(kwargs.get("password"))
+            user.save()
+
+            return user
+
+        except IntegrityError as e:
+            raise TypeError("A user with this username or email already exists.") from e
+
+    def create_branch_agent(self, *args, **kwargs):
+        """
+        Branch agents are special types of Users who can only be created by the Admin.
+        """
+
+        user = self.create_user(**kwargs)
+
+        user.is_staff = True
+        user.save()
+
+        return user
+
+    def create_superuser(self, **kwargs):
+        """
+        Ensure that users are created with valid passwords.
+        """
+        user = self.create_user(**kwargs)
+
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        return user
 
 
 class User(AbstractUser):
@@ -8,8 +60,8 @@ class User(AbstractUser):
     """
 
     email = models.EmailField(max_length=255, unique=True, blank=False)
+    objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
     REQUIRED_FIELDS = []
-

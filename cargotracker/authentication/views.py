@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from .serializers import UserLoginSerializer
-from cargotracker.UTILS.auth_utils import get_authentication_tokens
+from cargotracker.UTILS.auth_utils import get_authentication_tokens_from_request
 
 
 class UserLoginView(TokenObtainPairView):
@@ -22,31 +22,37 @@ class UserLoginView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         # Add some message and context to the response payload
-        payload = response.data.copy()
-        payload['message'] = "Succesfully logged you in. Welcome to CargoTracker!"
+        payload = {"data": response.data.copy()}
+        payload["data"][
+            "message"
+        ] = "Succesfully logged you in. Welcome to CargoTracker!"
 
         return Response(payload, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
 def logout_view(request):
     """
     This view invalidates the current `refresh` tokens so that users may not use them to make authenticated requests.
     """
 
     try:
-        auth_tokens = get_authentication_tokens(request)
-        refresh_token_instance = RefreshToken(auth_tokens.get('refresh'))
+        auth_tokens = get_authentication_tokens_from_request(request)
+        refresh_token_instance = RefreshToken(auth_tokens.get("refresh"))
         refresh_token_instance.blacklist()
 
-        next_url = request.query_params.get('next') if request.query_params else ''
+        next_url = request.query_params.get("next") if request.query_params else ""
 
         response = {
             "data": {
                 "message": "You have been successfully logged out.",
-                "next_url": next_url
-                }
+                "next_url": next_url,
+            }
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_200_OK)
 
     except TokenError:
-        return Response({"errors": {"detail": "You are already logged out"}})
+        return Response(
+            {"errors": {"detail": "You are already logged out"}},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
