@@ -7,10 +7,23 @@ class BranchManager(models.Manager):
     This will have methods to easily help us interact with the Branch object. We override the default Django Manager.
     """
 
+    def get_agent_branch(self, agent=None):
+        """
+        Get the agent's branch. If the agent does not have a branch, return None.
+        """
+
+        qs = Branch.objects.filter(branch_agent=agent)
+        if qs.exists():
+            return qs.first()
+        return None
+
     def create_branch(self, city=None, main_branch=False, branch_agent=None):
         """
         This method helps us to create branches with their agents
         """
+
+        if self.get_agent_branch(agent=branch_agent):
+            raise TypeError("This agent already has an active branch assigned to them.")
 
         if not branch_agent:
             raise TypeError("Branches must have an agent.")
@@ -42,7 +55,7 @@ class Branch(models.Model):
     """
 
     city = models.CharField(max_length=100, null=False, blank=False, unique=True)
-    branch_agent = models.ForeignKey(
+    branch_agent = models.OneToOneField(
         get_user_model(), on_delete=models.CASCADE, related_name="branch"
     )
     main_branch = models.BooleanField(default=False)
