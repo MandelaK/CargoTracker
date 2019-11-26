@@ -7,7 +7,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView
 
-from .serializers import UserLoginSerializer, AgentRegistrationSerializer, UserRegistrationSerializer
+from .serializers import (
+    UserLoginSerializer,
+    AgentRegistrationSerializer,
+    UserRegistrationSerializer,
+)
 from cargotracker.UTILS.auth_utils import get_authentication_tokens_from_request
 from authentication.permissions import IsSuperUser
 
@@ -74,7 +78,9 @@ class UserRegisterAPIView(CreateAPIView):
 
         response = super().create(request, *args, **kwargs)
         payload = {"data": response.data.copy()}
-        payload["data"]["message"] = "Succesfully signed you up. You can now log into the application."
+        payload["data"][
+            "message"
+        ] = "Succesfully signed you up. You can now log into the application."
 
         return Response(payload, status=status.HTTP_201_CREATED)
 
@@ -96,6 +102,8 @@ class AgentRegisterAPIView(CreateAPIView):
         response = super().create(request, *args, **kwargs)
         payload = {"data": response.data.copy()}
         agent_email = payload["data"].get("email")
-        payload["data"]["message"] = f"Succesfully created the agent. Login credentials have been sent to {agent_email}."
+        payload["data"][
+            "message"
+        ] = f"Succesfully created the agent. Login credentials have been sent to {agent_email}."
 
         return Response(payload, status=status.HTTP_201_CREATED)

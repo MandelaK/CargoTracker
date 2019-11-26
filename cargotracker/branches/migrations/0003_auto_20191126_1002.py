@@ -8,13 +8,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('branches', '0002_auto_20191124_0835'),
+        ("branches", "0002_auto_20191124_0835"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='branch',
-            name='branch_agent',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='branch', to=settings.AUTH_USER_MODEL),
+            model_name="branch",
+            name="branch_agent",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="branch",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
