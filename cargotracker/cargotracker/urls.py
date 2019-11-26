@@ -20,4 +20,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/auth/", include(("authentication.urls", "auth"), namespace="auth")),
     path("api/branches/", include(("branches.urls", "branches"), namespace="branches")),
+    path("api/cargo/", include(("cargo.urls", "branches"), namespace="cargo")),
 ]

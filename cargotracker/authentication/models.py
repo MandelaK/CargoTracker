@@ -46,9 +46,11 @@ class UserManager(BaseUserManager):
         agent_email = user.email
         sender = settings.ADMIN_EMAIL
         subject = "Account Created Succesfully."
-        message = f"You branch agent account was succesfully created. Your password is {kwargs.get('password')}."
+        message = f"Hi. Your branch agent account was succesfully created. Your login credentials are: Email: {kwargs.get('email')} . Password: {kwargs.get('password')}."
 
-        send_async_email(subject=subject, message=message, sender=sender, recepients=[agent_email,])
+        send_async_email(
+            subject=subject, message=message, sender=sender, recepients=[agent_email,]
+        )
 
         return user
 

@@ -1,21 +1,21 @@
 from django.shortcuts import render
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from authentication.permissions import IsSuperUser
+from authentication.permissions import IsSuperUserOrReadOnly
 from .serializers import BranchSerializer
+from .models import Branch
 
-# Create your views here.
 
-
-class CreateBranchAPIView(CreateAPIView):
+class ListCreateBranchAPIView(ListCreateAPIView):
     """
     This view allows the admins to create branches and their agents.
     """
 
-    permission_classes = [IsSuperUser]
+    permission_classes = [IsSuperUserOrReadOnly]
     serializer_class = BranchSerializer
+    queryset = Branch.objects.all()
 
     def create(self, request, *args, **kwargs):
         """

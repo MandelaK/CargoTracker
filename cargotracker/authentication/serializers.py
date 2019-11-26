@@ -30,7 +30,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'last_name', 'first_name']
+        fields = ["email", "username", "password", "last_name", "first_name"]
 
     def create(self, validated_data):
         """
@@ -41,21 +41,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             return user
 
         except TypeError as e:
-            raise serializers.ValidationError({"errors": {"detail": e.args[0], "code": "invalid"}})
+            raise serializers.ValidationError(
+                {"errors": {"detail": e.args[0], "code": "invalid"}}
+            )
 
 
 class AgentRegistrationSerializer(serializers.ModelSerializer):
     """
     Contain the serializer for creating branch agents.
     """
+
     is_staff = serializers.BooleanField(required=True, write_only=True)
     password = serializers.CharField(required=True, write_only=True)
 
-
     class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'is_staff']
-
+        fields = ["email", "username", "password", "is_staff"]
 
     def create(self, validated_data):
         """
@@ -67,4 +68,6 @@ class AgentRegistrationSerializer(serializers.ModelSerializer):
             return agent
 
         except TypeError as e:
-            raise serializers.ValidationError({"errors": {"detail": e.args[0], "code": "invalid"}})
+            raise serializers.ValidationError(
+                {"errors": {"detail": e.args[0], "code": "invalid"}}
+            )

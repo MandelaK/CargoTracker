@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import CreateBranchAPIView
+from .views import ListCreateBranchAPIView
 
 urlpatterns = [
-    path("", CreateBranchAPIView.as_view(), name="create-branch"),
+    path("", ListCreateBranchAPIView.as_view(), name="create-branch"),
 ]

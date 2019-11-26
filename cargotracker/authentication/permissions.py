@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsSuperUser(BasePermission):
@@ -12,4 +12,27 @@ class IsSuperUser(BasePermission):
         """
         return bool(
             request.user and request.user.is_staff and request.user.is_superuser
+        )
+
+
+class IsSuperUserOrReadOnly(BasePermission):
+    """
+    Anyone who is not a superuser only has read access
+    """
+
+    def has_permission(self, request, view):
+
+        return (request.method in SAFE_METHODS) or (
+            request.user and request.user.is_staff and request.user.is_superuser
+        )
+
+
+class IsRegularUser(BasePermission):
+    """
+    Only regular users can access this.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and not (
+            request.user.is_staff or request.user.is_superuser
         )

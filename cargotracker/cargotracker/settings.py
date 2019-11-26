@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "cargotracker",
     "authentication.apps.AuthenticationConfig",
     "branches.apps.BranchesConfig",
+    "cargo.apps.CargoConfig",
 ]
 
 MIDDLEWARE = [
