@@ -1,8 +1,9 @@
 from django.urls import path
 
-from .views import CargoCreateAPIView
+from .views import CargoListCreateAPIView, CargoRetrieveUpdateAPIView
 
 
 urlpatterns = [
-    path("", CargoCreateAPIView.as_view(), name="create-cargo"),
+    path("", CargoListCreateAPIView.as_view(), name="create-cargo"),
+    path("<id>/", CargoRetrieveUpdateAPIView.as_view(), name="cargo-detail"),
 ]

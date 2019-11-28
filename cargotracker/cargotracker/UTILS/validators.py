@@ -32,7 +32,5 @@ def validate_branch_exists_in_city(city):
     Validate whether a branch indeed exists in the provided city.
     """
 
-    qs = Branch.objects.search_by_city(city)
-    if not qs.exists():
-        return False
-    return qs.first()
+    branch = Branch.objects.search_by_city_exact(city)
+    return branch if branch else False

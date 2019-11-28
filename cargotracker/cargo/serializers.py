@@ -20,6 +20,7 @@ class CargoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cargo
+        
         fields = "__all__"
 
     def validate(self, data):
@@ -37,21 +38,24 @@ class CargoSerializer(serializers.ModelSerializer):
                 {"errors": {"booking_station": "We don't have a branch in that city."}}
             )
 
+        if destination.city == booking_station.city:
+            raise serializers.ValidationError(
+                {"errors": {"destination": "You cannot send a parcel to the same origin."}}
+            )
+
         data["destination"] = destination
         data["booking_station"] = booking_station
 
-        try:
-            recepient = User.objects.get(email=data.get("recepient"))
-            data["recepient"] = recepient
+        recepient = User.objects.get_user(email=data.get("recepient"))
 
-            return data
-
-        except User.DoesNotExist as e:
+        if not recepient:
             raise serializers.ValidationError(
-                {
-                    "detail": "There is no user registered with that email. Please invite them to register so that they can use our services."
-                }
-            ) from e
+                {"detail": "There is no user registered with that email."}
+            )
+
+        data["recepient"] = recepient
+
+        return data
 
     def create(self, validated_data):
         """
