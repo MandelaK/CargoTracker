@@ -42,7 +42,6 @@ class CargoListCreateAPIView(ListCreateAPIView):
 
         sender = User.objects.get_user(email=data.get("sender"))
         destination = Branch.objects.search_by_city_exact(city=data.get("destination"))
-        clearing_agent = destination.branch_agent
         if not destination:
             return Response(
                 {"errors": {"city": "We don't have a branch in that city."}},
@@ -58,6 +57,7 @@ class CargoListCreateAPIView(ListCreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        clearing_agent = destination.branch_agent
 
         # we would rather get this from the user making the current request
         booking_agent = request.user

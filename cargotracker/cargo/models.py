@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -94,6 +92,15 @@ class CargoManager(models.Manager):
         cargo = self.model.objects.create(**kwargs)
         cargo.save()
         return cargo
+
+    def get_cargo(self, **kwargs):
+        """
+        Return the first cargo that matches the specified params.
+        """
+
+        qs = Cargo.objects.filter(**kwargs)
+
+        return qs.first() if qs.exists() else False
 
 
 class Cargo(models.Model):

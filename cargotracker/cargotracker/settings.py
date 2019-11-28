@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "authentication.apps.AuthenticationConfig",
     "branches.apps.BranchesConfig",
     "cargo.apps.CargoConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
