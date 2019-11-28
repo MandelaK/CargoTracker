@@ -65,6 +65,16 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
+    def get_user(self, **kwargs):
+        """
+        Attempt to find the first user with the matching arguments.
+        """
+
+        qs = User.objects.filter(**kwargs)
+        if qs.exists():
+            return qs.first()
+        return None
+
 
 class User(AbstractUser):
     """
