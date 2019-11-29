@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import Branch
+from django.conf import settings
 
+from cargotracker.UTILS.tasks import send_async_email
+from .models import Branch
 from cargotracker.UTILS.validators import validate_that_email_belongs_to_active_agent
 
 
@@ -28,7 +30,18 @@ class BranchSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             response = Branch.objects.create_branch(**validated_data)
+
+            branch_agent = validated_data.get("branch_agent")
+            subject = "Branch Assigned."
+            message = f"Hello {branch_agent.username}, CargoTracker just opened a new branch in {response.city} and you have been assigned as the branch manager there. You can log in and process all orders passing through your branch."
+            send_async_email(
+                subject=subject,
+                message=message,
+                sender=settings.ADMIN_EMAIL,
+                recepients=[branch_agent.email,],
+            )
             return response
+
         except TypeError as e:
             raise serializers.ValidationError(
                 {"errors": {"detail": e.args[0], "code": "invalid"}}

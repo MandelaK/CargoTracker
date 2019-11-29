@@ -21,4 +21,5 @@ urlpatterns = [
     path("api/auth/", include(("authentication.urls", "auth"), namespace="auth")),
     path("api/branches/", include(("branches.urls", "branches"), namespace="branches")),
     path("api/cargo/", include(("cargo.urls", "branches"), namespace="cargo")),
+    path("api/orders/", include(("orders.urls", "orders"), namespace="orders")),
 ]

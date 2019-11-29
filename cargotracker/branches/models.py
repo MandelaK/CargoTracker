@@ -1,8 +1,5 @@
 from django.db import models, IntegrityError
 from django.contrib.auth import get_user_model
-from django.conf import settings
-
-from cargotracker.UTILS.tasks import send_async_email
 
 
 class BranchManager(models.Manager):
@@ -46,26 +43,29 @@ class BranchManager(models.Manager):
             branch = self.model.objects.create(
                 city=city, main_branch=main_branch, branch_agent=branch_agent
             )
-            subject = "Branch Assigned."
-            message = f"Hello {branch_agent.username}, CargoTracker just opened a new branch in {city.title()} and you have been assigned as the branch manager there. You can log in and process all orders passing through your branch."
-            send_async_email(
-                subject=subject,
-                message=message,
-                sender=settings.ADMIN_EMAIL,
-                recepients=[branch_agent.email,],
-            )
             return branch
 
         except IntegrityError as e:
             raise TypeError("There already exists a branch in this city.") from e
 
-    def search_by_city(self, city):
+    def search_by_city_loosely(self, city):
         """
         Return the branches found in a specific city.
         """
         if not city:
-            raise TypeError("Provide a city for querying through.")
+            return None
         return self.model.objects.get_queryset().filter(city__icontains=city)
+
+    def search_by_city_exact(self, city):
+        """
+        Return first brach found in any city or None.
+        """
+        if not city:
+            return None
+        qs = self.model.objects.get_queryset().filter(city=city)
+        if not qs.exists():
+            return None
+        return qs.first()
 
 
 class Branch(models.Model):
