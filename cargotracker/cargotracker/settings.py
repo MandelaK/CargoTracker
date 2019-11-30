@@ -159,8 +159,9 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
 }
 
-# Settings for HEUY
+# Settings for HUEY
 HUEY = {
+    "name": "cargotracker",
     "immediate": False,
     "utc": True,
     "connection": {"host": "localhost", "port": 6379, "db": 0},
