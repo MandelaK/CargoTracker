@@ -1,3 +1,3 @@
 worker: python cargotracker/manage.py run_huey
 
-web: gunicorn cargotracker.wsgi
+web: cd cargotracker && gunicorn cargotracker.wsgi
