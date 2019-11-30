@@ -163,5 +163,5 @@ HUEY = {
     "name": "cargotracker",
     "immediate": False,
     "utc": True,
-    "connection": {"host": "localhost", "port": 6379, "db": 0},
+    "url": os.getenv("REDIS_URL")
 }
